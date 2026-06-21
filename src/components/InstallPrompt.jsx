@@ -3,19 +3,21 @@ import './InstallPrompt.css';
 
 export default function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [visible, setVisible] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-
-  useEffect(() => {
-    // Detect iOS Safari (no beforeinstallprompt event on iOS)
+  // Detect iOS Safari once, lazily, so we don't setState synchronously in an effect
+  const [isIOS] = useState(() => {
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+    const inStandaloneMode = window.navigator.standalone === true;
+    return ios && !inStandaloneMode;
+  });
+  const [visible, setVisible] = useState(() => {
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
     const inStandaloneMode = window.navigator.standalone === true;
     const dismissed = sessionStorage.getItem('pwa-prompt-dismissed');
+    return ios && !inStandaloneMode && !dismissed;
+  });
 
-    if (ios && !inStandaloneMode && !dismissed) {
-      setIsIOS(true);
-      setVisible(true);
-    }
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem('pwa-prompt-dismissed');
 
     // Android Chrome: listen for the native install prompt
     const handler = (e) => {

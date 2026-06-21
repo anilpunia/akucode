@@ -68,6 +68,20 @@ Open on **two devices** simultaneously — one as Parent, one as Family — to s
 5. Family taps **"No — I'm NOT calling!"** → Parent sees 🚨 RED screen
 6. If family doesn't respond in 30 seconds → AI-generated memory question appears as backup
 
+### ✨ Additional features
+
+- **🎭 Scam-call simulator** — a built-in demo mode that plays a realistic AI-cloned voice ("Mom, I'm in jail, wire bail money…") through the browser's speech synthesis, so anyone can *experience* the threat before seeing KinCode defuse it. Clearly labelled as a demo simulation.
+- **🔎 AI scam-tactic analyzer** — after a scam is flagged, paste what the caller said and Gemini names the manipulation tactics (false urgency, isolation, false authority, financial pressure) with a plain-English explanation. We analyze the *social-engineering playbook* (stable), never the audio (an arms race).
+- **🧠 AI memory challenges**, **📞 multi-member alerts**, **🟢 availability status**, and **🕑 verification history**.
+
+---
+
+## 🔐 Security & Privacy Notes
+
+- **Gemini key never ships to the browser.** In production the app calls a Vercel serverless function (`/api/gemini`) that holds the key server-side. The browser never sees it. (A direct-call path exists only for local dev when `VITE_GEMINI_API_KEY` is set.)
+- **Scoped database rules.** `database.rules.json` replaces open test mode — reads/writes are scoped to a 4-digit family node rather than the whole database.
+- **No personal accounts.** Pairing uses an ephemeral 4-digit code; no email, password, or phone number is collected.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -77,9 +91,10 @@ Open on **two devices** simultaneously — one as Parent, one as Family — to s
 | Frontend | Vite + React 19 | Fast scaffolding, component-based |
 | Styling | Vanilla CSS (dark theme) | Zero overhead, full accessibility control |
 | Real-time | Firebase Realtime Database | Sub-second `onValue` listener, zero server code |
-| AI Layer | Google Gemini 2.0 Flash | Memory challenge generation from family stories |
+| AI Layer | Google Gemini 2.5 Flash | Memory challenges + scam-tactic analysis |
+| AI Security | Vercel serverless proxy | Keeps the Gemini key off the client |
 | Deployment | Vercel | GitHub-connected, instant preview URLs |
-| Font | Inter (Google Fonts) | Highly legible, wide weight range |
+| Font | Outfit (Google Fonts) | Rounded, modern, highly legible |
 
 ---
 
@@ -95,6 +110,8 @@ npm install
 
 ### 2. Create `.env` file
 
+Copy `.env.example` to `.env` and fill in your values:
+
 ```env
 VITE_FIREBASE_API_KEY=your_key_here
 VITE_FIREBASE_AUTH_DOMAIN=kincode-xxxxx.firebaseapp.com
@@ -103,11 +120,13 @@ VITE_FIREBASE_PROJECT_ID=kincode-xxxxx
 VITE_FIREBASE_STORAGE_BUCKET=kincode-xxxxx.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
-VITE_GEMINI_API_KEY=your_gemini_key_here
+VITE_GEMINI_API_KEY=your_gemini_key_for_LOCAL_DEV_only
 ```
 
 > Get Firebase config from [Firebase Console](https://console.firebase.google.com/) → Project Settings → Web App
 > Get Gemini key from [Google AI Studio](https://aistudio.google.com/apikey)
+
+> ⚠️ **Production deploy:** Do **not** set `VITE_GEMINI_API_KEY` in Vercel. Instead set `GEMINI_API_KEY` (no `VITE_` prefix) in the Vercel project so the `/api/gemini` serverless proxy uses it server-side and the key never reaches the browser.
 
 ### 3. Run
 
@@ -134,8 +153,10 @@ Tab A → Full-screen RED "SCAM DETECTED — HANG UP NOW" ✅
 
 ```
 kincode/
+├── api/
+│   └── gemini.js                # Vercel serverless proxy (hides Gemini key)
 ├── src/
-│   ├── App.jsx                  # Router + global TextSizeToggle
+│   ├── App.jsx                  # Router + global TextSizeToggle + InstallPrompt
 │   ├── App.css                  # Dark theme, CSS variables, animations
 │   ├── firebase.js              # Firebase init + all DB helper functions
 │   ├── pages/
@@ -144,11 +165,15 @@ kincode/
 │   │   ├── Parent.jsx/css       # Verify button, RED/GREEN results, tips
 │   │   └── Family.jsx/css       # Alert screen + response buttons
 │   ├── components/
-│   │   └── TextSizeToggle.jsx   # A / A+ / A++ accessibility toggle
+│   │   ├── TextSizeToggle.jsx   # A / A+ / A++ accessibility toggle
+│   │   ├── InstallPrompt.jsx    # PWA "Add to Home Screen" banner
+│   │   ├── ScamCallSimulator.jsx# 🎭 Demo: plays an AI-cloned scam call
+│   │   └── ScamTacticAnalysis.jsx# 🔎 Gemini-powered scam tactic analyzer
 │   └── services/
-│       └── gemini.js            # Gemini API for memory challenge generation
-├── .env                         # API keys (never committed)
-├── vercel.json                  # SPA routing config
+│       └── gemini.js            # Gemini calls (proxy + dev fallback)
+├── database.rules.json          # Scoped Firebase security rules
+├── .env.example                 # Env var template
+├── vercel.json                  # SPA routing (excludes /api)
 └── vite.config.js
 ```
 

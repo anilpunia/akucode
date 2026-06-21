@@ -1,5 +1,48 @@
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+// Gemini access strategy:
+//  • In production (Vercel), calls go through /api/gemini, a serverless function
+//    that holds the key server-side — the key is NEVER shipped in the browser bundle.
+//  • For local dev, if VITE_GEMINI_API_KEY is set, we fall back to a direct call
+//    so the team can test without deploying. Never set VITE_GEMINI_API_KEY in the
+//    production Vercel project — set GEMINI_API_KEY (no VITE_ prefix) instead.
+const LOCAL_DEV_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const DIRECT_URL =
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+
+/**
+ * Calls Gemini through the secure proxy, falling back to a direct call only when
+ * a local dev key is present. Returns the raw Gemini response JSON.
+ */
+async function callGemini(prompt, generationConfig) {
+  // Try the secure server proxy first (works in production on Vercel)
+  try {
+    const res = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, generationConfig }),
+    });
+    if (res.ok) return await res.json();
+    // If the proxy isn't available (e.g. `vite dev` with no serverless runtime),
+    // fall through to the direct dev path below.
+  } catch {
+    // Network/proxy not reachable — fall through to dev fallback.
+  }
+
+  // Local-dev fallback: direct call using a VITE_ key (dev only)
+  if (LOCAL_DEV_KEY && LOCAL_DEV_KEY !== 'YOUR_GEMINI_KEY_HERE') {
+    const res = await fetch(`${DIRECT_URL}?key=${LOCAL_DEV_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: generationConfig || { temperature: 0.7 },
+      }),
+    });
+    if (!res.ok) throw new Error(`Gemini direct call failed: ${res.status}`);
+    return await res.json();
+  }
+
+  throw new Error('Gemini unavailable: no proxy and no local dev key');
+}
 
 /**
  * Default fallback questions if Gemini API fails
@@ -16,11 +59,6 @@ const FALLBACK_QUESTIONS = [
  * @returns {Array<{question: string, answer: string}>} Array of Q&A pairs
  */
 export async function generateMemoryChallenges(memories) {
-  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_GEMINI_KEY_HERE') {
-    console.warn('Gemini API key not configured, using fallback questions');
-    return FALLBACK_QUESTIONS;
-  }
-
   const prompt = `You are helping a family create private security verification questions to protect against phone scams.
 
 Based on these private family memories shared by a family member, generate exactly 3 personal verification questions that ONLY a real family member would know the answer to.
@@ -37,39 +75,19 @@ ${memories.map((m, i) => `${i + 1}. ${m}`).join('\n')}
 Return a JSON array of exactly 3 objects, each with "question" and "answer" keys.`;
 
   try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 8192,
-          responseMimeType: 'application/json',
-        },
-      }),
+    const data = await callGemini(prompt, {
+      temperature: 0.7,
+      maxOutputTokens: 8192,
+      responseMimeType: 'application/json',
     });
 
-    if (!response.ok) {
-      const errBody = await response.text();
-      console.error('Gemini API response body:', errBody);
-      throw new Error(`Gemini API error: ${response.status} — ${errBody}`);
-    }
-
-    const data = await response.json();
-    // JSON mode guarantees the output is raw JSON — just parse directly
     const text = data.candidates?.[0]?.content?.parts?.find((p) => p.text)?.text;
-
-    if (!text) {
-      throw new Error('Empty response from Gemini');
-    }
+    if (!text) throw new Error('Empty response from Gemini');
 
     const questions = JSON.parse(text);
-
     if (!Array.isArray(questions) || questions.length === 0) {
       throw new Error('Invalid questions format');
     }
-
     return questions;
   } catch (error) {
     console.error('Gemini API failed, using fallback questions:', error);
@@ -78,16 +96,9 @@ Return a JSON array of exactly 3 objects, each with "question" and "answer" keys
 }
 
 /**
- * Analyze a scam message for social engineering tactics (stretch goal)
+ * Analyze a scam message for social engineering tactics
  */
 export async function analyzeScamTactics(message) {
-  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_GEMINI_KEY_HERE') {
-    return {
-      tactics: ['Unable to analyze — API not configured'],
-      riskLevel: 'Unknown',
-    };
-  }
-
   const prompt = `You are a scam detection expert. Analyze this message that someone received and identify the social engineering manipulation tactics being used.
 
 Message: "${message}"
@@ -103,28 +114,25 @@ Return ONLY a JSON object with no other text:
 {"tactics": ["tactic1", "tactic2"], "riskLevel": "High/Medium/Low", "explanation": "one sentence summary"}`;
 
   try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.3,
-          maxOutputTokens: 512,
-        },
-      }),
+    const data = await callGemini(prompt, {
+      temperature: 0.3,
+      maxOutputTokens: 512,
+      responseMimeType: 'application/json',
     });
 
-    const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = data.candidates?.[0]?.content?.parts?.find((p) => p.text)?.text;
+    if (!text) throw new Error('Empty response');
+
+    // JSON mode returns clean JSON, but guard against stray prose just in case
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    return JSON.parse(jsonMatch[0]);
+    return JSON.parse(jsonMatch ? jsonMatch[0] : text);
   } catch (error) {
     console.error('Scam analysis failed:', error);
     return {
       tactics: ['Analysis unavailable'],
       riskLevel: 'Unknown',
-      explanation: 'Could not analyze the message.',
+      explanation: 'Could not analyze the message right now.',
     };
   }
 }
+

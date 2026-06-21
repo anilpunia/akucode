@@ -10,6 +10,8 @@ import {
   getHistory,
   onFamilyMembersChange,
 } from '../firebase';
+import ScamCallSimulator from '../components/ScamCallSimulator';
+import ScamTacticAnalysis from '../components/ScamTacticAnalysis';
 import './Parent.css';
 
 // Anti-panic coaching tips + stalling scripts that rotate during the wait
@@ -34,7 +36,6 @@ function formatHistoryTime(ts) {
 function Parent() {
   const navigate = useNavigate();
   const familyCode = localStorage.getItem('kincode_family');
-  const parentName = localStorage.getItem('kincode_name');
 
   const [status, setStatus] = useState('idle'); // idle, pending, scam, safe
   const [childName, setChildName] = useState('Family Member');
@@ -112,12 +113,9 @@ function Parent() {
 
   // Track wait time and trigger memory challenge fallback
   // If all family members are unavailable, trigger after 5s instead of 30s
+  // (waitTime / showMemoryChallenge are reset in handleVerify and handleReset)
   useEffect(() => {
-    if (status !== 'pending') {
-      setWaitTime(0);
-      setShowMemoryChallenge(false);
-      return;
-    }
+    if (status !== 'pending') return;
 
     const threshold = allUnavailable ? 5 : 30;
 
@@ -229,6 +227,7 @@ function Parent() {
             {childName} confirmed they are <strong>NOT</strong> calling you.
             This is a scam. Do not send any money.
           </p>
+          <ScamTacticAnalysis />
           <button
             className="btn btn-outline result-btn"
             onClick={() => {
@@ -408,6 +407,8 @@ function Parent() {
         <p className="idle-hint">
           Got a suspicious call? Tap above to check if it's really {childNames.length > 0 ? childNames.join(' or ') : childName}.
         </p>
+
+        <ScamCallSimulator callerName={childName} />
 
         {history.length > 0 && (
           <div className="history-log card" aria-label="Recent verification history">

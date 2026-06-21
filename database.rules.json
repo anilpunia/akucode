@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "families": {
+      ".read": false,
+      ".write": false,
+      "$code": {
+        ".read": true,
+        ".write": true,
+        ".validate": "$code.length === 4",
+        "verification": {
+          "status": { ".validate": "newData.isString()" }
+        }
+      }
+    }
+  }
+}

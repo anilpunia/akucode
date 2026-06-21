@@ -1,0 +1,238 @@
+/* ──────────────────────────────────────────
+   Scam Call Simulator — demo centerpiece
+   ────────────────────────────────────────── */
+
+/* Trigger button (idle state) */
+.sim-trigger {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 420px;
+  margin-top: 20px;
+  padding: 16px 20px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px dashed rgba(245, 158, 11, 0.5);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sim-trigger:hover {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.8);
+}
+
+.sim-trigger:active {
+  transform: scale(0.98);
+}
+
+.sim-trigger-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.sim-trigger-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sim-trigger-text strong {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+}
+
+.sim-trigger-sub {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+/* Full-screen call overlay */
+.sim-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: linear-gradient(170deg, #1a1430 0%, #0d0a1a 60%, #000 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  animation: fade-in 0.3s ease forwards;
+}
+
+.sim-demo-badge {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.6);
+  color: #fcd34d;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+}
+
+.sim-call-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+}
+
+.sim-avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #6366f1 0%, #8b5cf6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: var(--spacing-lg);
+  box-shadow: 0 8px 40px rgba(124, 58, 237, 0.5);
+}
+
+.sim-avatar--ringing {
+  animation: sim-ring-pulse 1s ease-in-out infinite;
+}
+
+@keyframes sim-ring-pulse {
+  0%, 100% { box-shadow: 0 8px 40px rgba(124, 58, 237, 0.5); transform: scale(1); }
+  50% { box-shadow: 0 8px 70px rgba(124, 58, 237, 0.9), 0 0 0 12px rgba(124, 58, 237, 0.12); transform: scale(1.04); }
+}
+
+.sim-caller-label {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.sim-caller-name {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.sim-caller-number {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Ring accept/decline buttons */
+.sim-ring-actions {
+  display: flex;
+  gap: 80px;
+  margin-top: var(--spacing-md);
+}
+
+.sim-call-btn {
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: transform var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sim-call-btn:active {
+  transform: scale(0.92);
+}
+
+.sim-call-btn--accept,
+.sim-call-btn--decline {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.sim-call-btn--accept {
+  background: #00c853;
+  box-shadow: 0 6px 30px rgba(0, 200, 83, 0.5);
+  animation: sim-accept-bob 1.2s ease-in-out infinite;
+}
+
+@keyframes sim-accept-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.sim-call-btn--decline {
+  background: #ff3b3b;
+  box-shadow: 0 6px 30px rgba(255, 59, 59, 0.5);
+}
+
+/* Speaking state */
+.sim-speaking {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 50px;
+  margin-bottom: var(--spacing-md);
+}
+
+.sim-wave {
+  width: 5px;
+  height: 16px;
+  border-radius: 3px;
+  background: var(--accent-bright);
+  animation: sim-wave-bounce 0.9s ease-in-out infinite;
+}
+
+.sim-wave:nth-child(2) { animation-delay: 0.15s; }
+.sim-wave:nth-child(3) { animation-delay: 0.3s; }
+.sim-wave:nth-child(4) { animation-delay: 0.45s; }
+
+@keyframes sim-wave-bounce {
+  0%, 100% { height: 14px; opacity: 0.5; }
+  50% { height: 38px; opacity: 1; }
+}
+
+.sim-speaking-label {
+  margin-left: 12px;
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+}
+
+.sim-prompt {
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.sim-call-btn--end {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: var(--radius-md);
+}
+
+@media (max-width: 480px) {
+  .sim-ring-actions { gap: 56px; }
+  .sim-avatar { width: 110px; height: 110px; font-size: 48px; }
+}

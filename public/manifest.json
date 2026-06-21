@@ -1,0 +1,55 @@
+{
+  "name": "KinCode — Family Safety Net",
+  "short_name": "KinCode",
+  "description": "Verify suspicious calls instantly. Protect your family from AI voice scams.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "orientation": "portrait-primary",
+  "categories": ["utilities", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Verify a Call",
+      "short_name": "Verify",
+      "description": "Jump straight to the verify button",
+      "url": "/parent",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Family View",
+      "short_name": "Family",
+      "description": "Open the family alert screen",
+      "url": "/family",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/docs/scam-screen.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "label": "SCAM DETECTED screen"
+    }
+  ]
+}

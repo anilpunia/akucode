@@ -1,0 +1,572 @@
+/* ──────────────────────────────────────────
+   Parent Page — Idle State
+   ────────────────────────────────────────── */
+.parent-page {
+  position: relative;
+}
+
+.idle-content {
+  text-align: center;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  z-index: 1;
+}
+
+.idle-status {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Connected pill badge */
+.connected-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: rgba(0, 245, 160, 0.08);
+  border: 1px solid rgba(0, 245, 160, 0.25);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.connected-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--safe);
+  box-shadow: 0 0 8px var(--safe-glow);
+  animation: breathing 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.idle-code {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+/* ──────────────────────────────────────────
+   Circular verify button with pulsing rings
+   ────────────────────────────────────────── */
+.verify-circle-outer {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  margin: var(--spacing-lg) auto;
+}
+
+.verify-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--danger);
+  opacity: 0;
+  animation: ring-expand 2.4s ease-out infinite;
+}
+
+.verify-ring--1 { animation-delay: 0s; }
+.verify-ring--2 { animation-delay: 0.8s; }
+.verify-ring--3 { animation-delay: 1.6s; }
+
+.btn-verify-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: var(--danger-grad);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 0 60px rgba(255, 59, 59, 0.55),
+    0 12px 50px rgba(0, 0, 0, 0.6);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-verify-circle:active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+.verify-circle-icon {
+  font-size: 52px;
+  line-height: 1;
+}
+
+.verify-circle-label {
+  font-size: 18px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: 3px;
+  font-family: var(--font-family);
+}
+
+.idle-hint {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xl);
+  line-height: 1.5;
+}
+
+.disconnect-btn {
+  font-size: var(--font-size-sm) !important;
+  min-height: 44px !important;
+  padding: 10px 20px !important;
+  color: var(--text-muted) !important;
+}
+
+/* ──────────────────────────────────────────
+   Unavailable Notice
+   ────────────────────────────────────────── */
+.unavailable-badge {
+  color: var(--danger);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.unavailable-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 12px 16px;
+  border: 1px solid var(--danger);
+  border-radius: 12px;
+  background: rgba(255, 45, 45, 0.1);
+  margin-bottom: var(--spacing-lg);
+  text-align: left;
+}
+
+.unavailable-notice p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--danger);
+  line-height: 1.4;
+}
+
+/* ──────────────────────────────────────────
+   Verification History Log
+   ────────────────────────────────────────── */
+.history-log {
+  width: 100%;
+  padding: 16px;
+  margin: var(--spacing-lg) 0;
+  text-align: left;
+}
+
+.history-title {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.history-row:last-child {
+  border-bottom: none;
+}
+
+.history-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.history-text {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+.history-row--safe .history-text strong {
+  color: var(--safe);
+}
+
+.history-row--scam .history-text strong {
+  color: var(--danger);
+}
+
+.history-time {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ──────────────────────────────────────────
+   Parent Page — Pending / Waiting State
+   ────────────────────────────────────────── */
+.pending-content {
+  text-align: center;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  z-index: 1;
+}
+
+.pending-pulse-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto var(--spacing-lg);
+}
+
+.pending-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  z-index: 2;
+}
+
+.pending-pulse-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--warning);
+  border-radius: 50%;
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+.pending-pulse-ring.delay-1 {
+  animation-delay: 0.5s;
+}
+
+.pending-pulse-ring.delay-2 {
+  animation-delay: 1s;
+}
+
+.pending-title {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: var(--warning);
+  margin-bottom: var(--spacing-sm);
+}
+
+.pending-timer {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Radar sweep animation on waiting pulse container */
+.pending-pulse-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(245, 158, 11, 0.5) 50deg,
+    transparent 50deg
+  );
+  animation: radar-sweep 2s linear infinite;
+}
+
+/* Coaching card — live tip with progress dots */
+.coaching-card {
+  background: rgba(245, 158, 11, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 20px;
+  padding: 20px;
+  text-align: left;
+  animation: fade-in 0.4s ease;
+  width: 100%;
+}
+
+.coaching-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.coaching-live-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--warning);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.coaching-counter {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.coaching-card-text {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-style: italic;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.coaching-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.coaching-dot {
+  height: 5px;
+  width: 5px;
+  border-radius: 3px;
+  background: rgba(245, 158, 11, 0.25);
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.coaching-dot.active {
+  width: 20px;
+  background: var(--warning);
+}
+
+/* ──────────────────────────────────────────
+   Parent Page — Memory Challenge
+   ────────────────────────────────────────── */
+.memory-challenge {
+  text-align: center;
+}
+
+.memory-icon {
+  font-size: 56px;
+  display: block;
+  margin-bottom: var(--spacing-md);
+}
+
+.memory-question {
+  background: var(--bg-secondary);
+  border: 2px solid var(--warning);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--warning);
+  line-height: 1.4;
+}
+
+.memory-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ──────────────────────────────────────────
+   Parent Page — Result Screens
+   ────────────────────────────────────────── */
+
+/* SCAM — Full-screen RED with animated diagonal stripes */
+.result-scam {
+  background: linear-gradient(180deg, #1a0000 0%, #2d0000 40%, #1a0000 100%) !important;
+  animation: shake 0.6s ease;
+}
+
+.result-scam::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 0, 0, 0.07) 0px,
+    rgba(255, 0, 0, 0.07) 20px,
+    transparent 20px,
+    transparent 40px
+  );
+  animation: diagonal-sweep 1.5s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.result-scam::before {
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(255, 45, 45, 0.25) 0%,
+    transparent 60%
+  ) !important;
+}
+
+/* Flashing border overlay — shared by scam & safe */
+.result-border-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  border-width: 6px;
+  border-style: solid;
+  border-radius: 0;
+}
+
+.result-border-flash--danger {
+  animation: strobe-border-red 0.7s ease-in-out infinite;
+}
+
+.result-border-flash--safe {
+  animation: strobe-border-green 1.2s ease-in-out infinite;
+}
+
+/* Pulsing green orb behind the safe screen */
+.result-safe-orb {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 230, 118, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: glow-pulse-green 2s ease-in-out infinite;
+}
+
+/* SAFE — Full-screen GREEN with rising light rays */
+.result-safe {
+  background: linear-gradient(180deg, #000f07 0%, #001a0b 40%, #000f07 100%) !important;
+}
+
+.result-safe::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  width: 800px;
+  height: 800px;
+  background: conic-gradient(
+    from 250deg at 50% 100%,
+    transparent 0deg,
+    rgba(0, 245, 160, 0.06) 8deg,
+    transparent 16deg,
+    rgba(0, 245, 160, 0.04) 28deg,
+    transparent 36deg,
+    rgba(0, 245, 160, 0.08) 44deg,
+    transparent 52deg,
+    rgba(0, 245, 160, 0.05) 60deg,
+    transparent 68deg,
+    rgba(0, 245, 160, 0.07) 76deg,
+    transparent 84deg,
+    transparent 100deg
+  );
+  animation: ray-spin 10s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.result-content {
+  text-align: center;
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  z-index: 1;
+}
+
+.result-icon {
+  font-size: 96px;
+  display: block;
+  margin-bottom: var(--spacing-md);
+}
+
+.result-icon--shake {
+  animation: icon-shake 1.2s ease-in-out infinite;
+}
+
+.result-title {
+  font-size: var(--font-size-hero);
+  font-weight: 900;
+  letter-spacing: 4px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.result-scam .result-title {
+  color: var(--danger);
+  text-shadow: 0 0 40px var(--danger-glow), 0 0 80px var(--danger-glow);
+}
+
+.result-safe .result-title {
+  color: var(--safe);
+  text-shadow: 0 0 40px var(--safe-glow), 0 0 80px var(--safe-glow);
+}
+
+.result-subtitle {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+}
+
+.result-scam .result-subtitle {
+  color: #ff6b6b;
+}
+
+.result-safe .result-subtitle {
+  color: #69f0ae;
+}
+
+.result-detail {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-xl);
+}
+
+.result-btn {
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Result buttons need contrast on colored backgrounds */
+.result-scam .btn-outline {
+  border-color: rgba(255, 45, 45, 0.5);
+  color: #ff9999;
+}
+
+.result-scam .btn-outline:hover {
+  background: rgba(255, 45, 45, 0.15);
+}
+
+.result-safe .btn-outline {
+  border-color: rgba(0, 230, 118, 0.5);
+  color: #69f0ae;
+}
+
+.result-safe .btn-outline:hover {
+  background: rgba(0, 230, 118, 0.1);
+}
+
+@media (max-width: 480px) {
+  .result-icon {
+    font-size: 72px;
+  }
+
+  .result-title {
+    font-size: var(--font-size-3xl);
+    letter-spacing: 2px;
+  }
+
+  .result-subtitle {
+    font-size: var(--font-size-xl);
+  }
+}

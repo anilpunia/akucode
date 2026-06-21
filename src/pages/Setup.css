@@ -1,0 +1,160 @@
+.setup-page .card {
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.setup-header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.setup-icon {
+  font-size: 56px;
+  display: block;
+  margin-bottom: var(--spacing-sm);
+}
+
+.setup-field {
+  margin-bottom: var(--spacing-md);
+}
+
+.setup-error {
+  color: var(--danger);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: var(--danger-bg);
+  border-radius: var(--radius-sm);
+}
+
+.setup-back {
+  margin-top: var(--spacing-sm);
+}
+
+/* Code display (after creation) */
+.setup-success {
+  text-align: center;
+}
+
+.setup-success-icon {
+  font-size: 56px;
+  display: block;
+  margin-bottom: var(--spacing-md);
+}
+
+.code-display {
+  background: rgba(124, 58, 237, 0.08);
+  border: 2px solid rgba(124, 58, 237, 0.4);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg) var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+}
+
+.code-digits {
+  font-size: var(--font-size-hero);
+  font-weight: 900;
+  letter-spacing: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #a78bfa 50%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.5));
+}
+
+.setup-hint {
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-lg);
+}
+
+@media (max-width: 480px) {
+  .code-digits {
+    font-size: var(--font-size-3xl);
+    letter-spacing: 12px;
+  }
+}
+
+/* ──────────────────────────────────────────
+   Memory Questions CTA (after code shown)
+   ────────────────────────────────────────── */
+.memory-cta {
+  background: var(--bg-secondary);
+  border: 1px solid rgba(255, 45, 45, 0.25);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  text-align: left;
+}
+
+.memory-cta-label {
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.memory-cta-desc {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-md);
+}
+
+/* ──────────────────────────────────────────
+   Memory Inputs (on memory step)
+   ────────────────────────────────────────── */
+.memory-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: var(--spacing-md);
+}
+
+.memory-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.memory-input-pill {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.memory-input-row .input {
+  flex: 1;
+}
+
+.memory-ai-badge {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+  background: rgba(124, 58, 237, 0.08);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.memory-ai-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
